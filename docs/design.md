@@ -169,6 +169,14 @@ Turn the touchscreen on when someone is looking at it and off when nobody is.
   so a glance away doesn't blank it.
 - **Privacy:** frames stay in memory, are never written or sent, and only a
   present/absent flag leaves the detector. Say so in the README if built.
+- **Upgrade: Raspberry Pi AI Camera** (Sony IMX500, about £63, works on the
+  Pi 4 with the included 15-pin cable, in production until at least Jan 2028).
+  The neural network runs on the sensor, so the Pi only gets results and stays
+  free for the board, Chromium and Grafana. A person detector covers
+  "someone's there"; a pose-estimation model reports eye/nose keypoints, which
+  is closer to "eyes on". Check whether the Raspberry Pi model zoo has a
+  ready-made face detector. Plan: try OpenCV on an existing camera first, and
+  move to the AI Camera if CPU load or heat becomes a problem.
 - **Cheaper / complementary:** an HLK-LD2410 mmWave sensor (~£5) on GPIO
   detects a person in the room, even sitting still, with no camera and almost
   no CPU. Combined: mmWave wakes the screen and starts the camera; the camera
