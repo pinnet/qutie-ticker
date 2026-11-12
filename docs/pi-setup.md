@@ -1,6 +1,8 @@
 # Raspberry Pi 4 setup
 
-Raspberry Pi OS (64-bit, Bookworm or later) with the official 7" touchscreen.
+Start with **Raspberry Pi OS Lite (64-bit)**, which is plain Debian plus the Pi's
+firmware and drivers. Steps 1–4 are all headless; the touchscreen board is
+optional and can be added later (step 5).
 
 ## 1. Deno
 
@@ -62,11 +64,16 @@ For a run without the printer, `deno task dry` writes to `dry.prn` instead.
 Install `deploy/qutie-ticker.service` to run it at boot. Put the token in
 `/etc/qutie-ticker.env` as `GITHUB_TOKEN=...` (mode 600).
 
-## 5. Touchscreen kiosk
+## 5. Touchscreen kiosk (later)
 
-Open the board full-screen at login (labwc on Bookworm):
+Lite has no desktop. Add a minimal Wayland kiosk: `cage` runs one app
+full-screen with no desktop around it.
 
 ```sh
-mkdir -p ~/.config/labwc
-echo 'chromium-browser --kiosk --noerrdialogs --disable-infobars http://127.0.0.1:8080 &' >> ~/.config/labwc/autostart
+sudo apt install cage chromium
+cage -- chromium --kiosk --noerrdialogs --disable-infobars http://127.0.0.1:8080
 ```
+
+Run that from a systemd service or autologin on tty1 to start it at boot. If
+you install the full desktop image instead, add the same `chromium --kiosk …`
+line to `~/.config/labwc/autostart`.
