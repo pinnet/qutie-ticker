@@ -1,0 +1,12 @@
+{
+  "repos": [
+    "pinnet/AtticArc",
+    "dannyarnoldcom/Warglove"
+  ],
+  "pollSeconds": 60,
+  "printer": "rfcomm:/dev/rfcomm0",
+  "printSuccess": true,
+  "flip": false,
+  "statePath": "state.json",
+  "uiPort": 8080
+}

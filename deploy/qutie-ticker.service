@@ -1,0 +1,16 @@
+[Unit]
+Description=qutie-ticker: GitHub Actions results on the Qutie label printer
+After=network-online.target rfcomm-qutie.service
+Wants=network-online.target rfcomm-qutie.service
+
+[Service]
+# Adjust User and WorkingDirectory to where the repo is checked out
+User=pi
+WorkingDirectory=/home/pi/qutie-ticker
+EnvironmentFile=/etc/qutie-ticker.env
+ExecStart=/home/pi/.deno/bin/deno task start
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

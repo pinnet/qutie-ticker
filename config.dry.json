@@ -1,0 +1,8 @@
+{
+  "repos": ["pinnet/AtticArc"],
+  "pollSeconds": 60,
+  "printer": "file:dry.prn",
+  "printSuccess": true,
+  "statePath": "state.dry.json",
+  "uiPort": 8080
+}

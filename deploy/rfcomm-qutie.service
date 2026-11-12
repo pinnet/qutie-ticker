@@ -1,0 +1,14 @@
+[Unit]
+Description=Bind the Qutie label printer to /dev/rfcomm0
+After=bluetooth.service
+Requires=bluetooth.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Replace with your printer's MAC (bluetoothctl scan shows it as Qutie-XXXX)
+ExecStart=/usr/bin/rfcomm bind 0 AA:BB:CC:DD:EE:FF 1
+ExecStop=/usr/bin/rfcomm release 0
+
+[Install]
+WantedBy=multi-user.target
