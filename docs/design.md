@@ -118,3 +118,35 @@ the same bitmap.
 - A real LZO matcher to cut transfer time.
 - Watch every repo under an owner rather than a fixed list.
 - Use the Pi as a Proxmox QDevice too.
+
+## Grafana integration (planned)
+
+The touchscreen shows Grafana dashboards from the home network alongside the
+build board. Two steps:
+
+1. **Display.** Chromium kiosk with the board and a Grafana dashboard in
+   `?kiosk` mode, rotating tabs (see docs/pi-setup.md, step 5).
+2. **Build metrics in Grafana.** qutie-ticker exposes `/metrics` in
+   Prometheus text format, and Prometheus scrapes it. Builds then appear on
+   the normal dashboards, so the screen can eventually be Grafana only.
+
+Proposed metrics, labelled by `repo` and `workflow`:
+
+| Metric | Type | Meaning |
+|---|---|---|
+| `qutie_runs_total{conclusion}` | counter | Finished runs seen, by conclusion |
+| `qutie_run_duration_seconds` | histogram | Run duration, start to finish |
+| `qutie_last_run_success` | gauge | 1 if the latest run passed, 0 if not |
+| `qutie_last_run_timestamp_seconds` | gauge | When the latest run finished |
+| `qutie_prints_total{result}` | counter | Strips sent / failed |
+| `qutie_poll_errors_total` | counter | Failed GitHub polls |
+
+Notes:
+- The board binds to 127.0.0.1 only. `/metrics` needs a LAN-facing listener,
+  so either bind a second port for metrics alone or move the board to the LAN
+  (the reprint/print endpoints would then need some auth).
+- `deno task start` gains one `--allow-net` entry for that listener.
+- Counters reset when the process restarts; Prometheus' `increase()` handles
+  that.
+- Alternative without Prometheus: Grafana's Infinity datasource can read a
+  JSON endpoint directly, though it's less suited to history.
