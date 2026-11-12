@@ -118,6 +118,7 @@ the same bitmap.
 - A real LZO matcher to cut transfer time.
 - Watch every repo under an owner rather than a fixed list.
 - Use the Pi as a Proxmox QDevice too.
+- **Screen wakes when someone looks at it** (see below).
 
 ## Grafana integration (planned)
 
@@ -150,3 +151,28 @@ Notes:
   that.
 - Alternative without Prometheus: Grafana's Infinity datasource can read a
   JSON endpoint directly, though it's less suited to history.
+
+## Presence-based screen wake (idea)
+
+Turn the touchscreen on when someone is looking at it and off when nobody is.
+
+- **Camera:** Pi Camera Module 3 (CSI) or a USB webcam by the screen. One may
+  already be on hand.
+- **Detection:** face detection rather than eye detection. It's more reliable,
+  and a frontal face is a good proxy for looking at the screen. OpenCV's YuNet
+  (`cv2.FaceDetectorYN`), or Haar cascades as a fallback, at 320x240 and
+  2–5 fps: roughly one Pi 4 core.
+- **Screen control:** `wlr-randr --output DSI-1 --off` / `--on` under the
+  Wayland desktop, or the backlight via `/sys/class/backlight/*/bl_power`
+  (path depends on touchscreen version).
+- **Hysteresis:** on as soon as a face appears; off after ~60 s without one,
+  so a glance away doesn't blank it.
+- **Privacy:** frames stay in memory, are never written or sent, and only a
+  present/absent flag leaves the detector. Say so in the README if built.
+- **Cheaper / complementary:** an HLK-LD2410 mmWave sensor (~£5) on GPIO
+  detects a person in the room, even sitting still, with no camera and almost
+  no CPU. Combined: mmWave wakes the screen and starts the camera; the camera
+  decides whether anyone is actually looking.
+- **Shape:** a separate small service (Python, as OpenCV's bindings are best
+  there) rather than part of the Deno app. It could also export a
+  `qutie_presence` gauge to the planned Prometheus metrics.
